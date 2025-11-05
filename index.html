@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Megha Photos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 90vw;
+            max-width: 900px;
+            height: 80vh;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .photo-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(30px) brightness(0.7);
+            transform: scale(1.2);
+        }
+
+        .photo-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .main-photo {
+            max-width: 90%;
+            max-height: 65%;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+        }
+
+        .caption {
+            margin-top: 30px;
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            color: #333;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 500;
+            line-height: 1.6;
+            max-width: 80%;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .slide-indicator {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: white;
+            width: 35px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .slideshow-container {
+                width: 95vw;
+                height: 85vh;
+            }
+
+            .photo-content {
+                padding: 20px;
+            }
+
+            .main-photo {
+                max-height: 55%;
+            }
+
+            .caption {
+                font-size: 1em;
+                padding: 15px 25px;
+                margin-top: 20px;
+            }
+
+            .nav-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <div class="slide-indicator" id="slideIndicator"></div>
+        
+        <div id="slidesContainer"></div>
+
+        <div class="controls">
+            <button class="nav-btn" id="prevBtn">◀</button>
+            <button class="nav-btn" id="nextBtn">▶</button>
+        </div>
+    </div>
+
+    <script>
+        // ===== YAHAN APNI PHOTOS AUR CAPTIONS DALEN =====
+        const photos = [
+            {
+                image: 'image1.jpg',
+                caption: 'Yeh pehli photo ka caption hai'
+            },
+            {
+                image: 'image2.jpg',
+                caption: 'Yeh dusri photo ka caption hai'
+            },
+            {
+                image: 'image3.png',
+                caption: 'Yeh teesri photo ka caption hai'
+            },
+            {
+                image: 'image4.png',
+                caption: 'Yeh chauthi photo ka caption hai'
+            },
+            {
+                image: 'photo5.jpg',
+                caption: 'Yeh paanchvi photo ka caption hai'
+            }
+        ];
+        // ============================================
+
+        const slidesContainer = document.getElementById('slidesContainer');
+        const slideIndicator = document.getElementById('slideIndicator');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        let currentSlide = 0;
+
+        // Slides create karen
+        photos.forEach((photo, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'slide';
+            if (index === 0) slide.classList.add('active');
+            
+            slide.innerHTML = `
+                <img src="${photo.image}" class="photo-background" alt="background">
+                <div class="photo-content">
+                    <img src="${photo.image}" class="main-photo" alt="Photo ${index + 1}">
+                    <div class="caption">${photo.caption}</div>
+                </div>
+            `;
+            
+            slidesContainer.appendChild(slide);
+
+            // Indicator dots
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(index));
+            slideIndicator.appendChild(dot);
+        });
+
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+
+        function goToSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            currentSlide = n;
+            if (currentSlide >= slides.length) currentSlide = 0;
+            if (currentSlide < 0) currentSlide = slides.length - 1;
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            goToSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentSlide - 1);
+        }
+
+        // Navigation buttons
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // Auto play slideshow (har 5 second mein)
+        setInterval(nextSlide, 5000);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'ArrowRight') nextSlide();
+        });
+    </script>
+</body>
+</html>
