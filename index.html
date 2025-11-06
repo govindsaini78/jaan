@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MY JAAN</title>
+    <title>Megha Photos</title>
     <style>
         * {
             margin: 0;
@@ -80,15 +80,17 @@
         .caption {
             margin-top: 30px;
             padding: 20px 40px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
             border-radius: 20px;
-            color: #333;
+            color: #fff;
             text-align: center;
             font-size: 1.3em;
             font-weight: 500;
             line-height: 1.6;
             max-width: 80%;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .controls {
@@ -193,23 +195,23 @@
         const photos = [
             {
                 image: 'image1.jpg',
-                             caption: ''तुम्हे निहारते हुए पूरी उम्र गुजार दूं तुम कुछ इस तरह पस
+                caption: ''
             },
             {
                 image: 'image2.jpg',
-                                 caption: ''तुम्हे निहारते हुए पूरी उम्र गुजार दूं तुम कुछ इस तरह पस
+                caption: ''
             },
             {
                 image: 'image3.png',
-                                 caption: ''तुम्हे निहारते हुए पूरी उम्र गुजार दूं तुम कुछ इस तरह पस
+                caption: ''
             },
             {
                 image: 'image4.png',
-                                 caption: ''तुम्हे निहारते हुए पूरी उम्र गुजार दूं तुम कुछ इस तरह पस
+                caption: ''
             },
             {
                 image: 'photo5.jpg',
-                caption: ''तुम्हे निहारते हुए पूरी उम्र गुजार दूं तुम कुछ इस तरह पसन्द हो मुझे..'
+                caption: 'तुम्हे निहारते हुए पूरी उम्र गुजार दूं तुम कुछ इस तरह पसन्द हो मुझे..!!'
             }
         ];
         // ============================================
@@ -231,7 +233,7 @@
                 <img src="${photo.image}" class="photo-background" alt="background">
                 <div class="photo-content">
                     <img src="${photo.image}" class="main-photo" alt="Photo ${index + 1}">
-                    <div class="caption">${photo.caption}</div>
+                    ${photo.caption ? `<div class="caption">${photo.caption}</div>` : ''}
                 </div>
             `;
             
@@ -282,6 +284,4 @@
         });
     </script>
 </body>
-
 </html>
-
